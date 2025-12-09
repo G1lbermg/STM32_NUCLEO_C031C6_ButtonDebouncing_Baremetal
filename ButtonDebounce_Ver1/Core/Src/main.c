@@ -17,11 +17,11 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <errorCheckUtilities.h>
+#include "button_BSP.h"
+#include "error_check_utilities.h"
+#include "led_BSP.h"
+#include "uart_BSP.h"
 #include "main.h"
-#include "buttonBSP.h"
-#include "ledBSP.h"
-#include "uartBSP.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -112,8 +112,10 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
-  initLED(GPIOA, PIN_7);
-  initButton(GPIOA, PIN_6);
+  LED_t LED1;
+  check_Error((init_LED(&LED1,GPIOA, PIN_5)), __FILE__, __LINE__);
+
+  initButton(GPIOC, PIN_13);
 
 //  initUART();
 
@@ -131,12 +133,12 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	turnOffLED(GPIOA, PIN_7);
+	turn_Off_LED(&LED1);
 
 
-	readButton(GPIOA, PIN_6, &buttonState);
+	readButton(GPIOC, PIN_13, &buttonState);
 	if(buttonState == 0){
-		turnOnLED(GPIOA, PIN_7);
+		turn_On_LED(&LED1);
 		LL_mDelay(200);
 	}
 
@@ -188,10 +190,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+	Central_Error_Handler(E_ERROR_GENERIC, __FILE__, __LINE__);
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
