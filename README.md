@@ -1,4 +1,6 @@
-# STM32_NUCLEO_C031C6_ButtonDebouncing_Baremetal
+# Button Debouncing
+## STM32 NUCLEO-C031C6 Bare Metal Implementation
+
 Minimal C implementation for button debouncing on the STM32C031C6. The repository contains two versions: one using the SysTick timer for debouncing (V1), and the other using the MCU's Timer 3 (V2). Both projects utilize UART to print the button state. Initialization for clocks and debug is done via CubeMX; all other configuration (GPIO, UART, and Timers) is handled via direct memory-mapped register access. A basic error handler is also included in each project.  
 
 ### 1. Hardware Setup
