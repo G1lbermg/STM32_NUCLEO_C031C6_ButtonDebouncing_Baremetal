@@ -1,7 +1,9 @@
-#include <uart_BSP.h>
+#include <usart2_BSP.h>
 
+#define CARRIAGE_RETURN 13U
+#define NEW_LINE 10U
 
-void initUART(void)
+void initUSART2(void)
 {
 	/**************Setting up pin PA2 to transmit: **************/
 
@@ -45,7 +47,7 @@ void initUART(void)
 	SET_BIT(USART2->CR1, USART_CR1_TE);
 }
 
-void printMsg(char *message, ...)
+void printMsg_USART2(char *message, ...)
 {
 	char buff[128];
 
@@ -56,10 +58,34 @@ void printMsg(char *message, ...)
 	va_end(args);
 
 	for(char *p = buff; *p != '\0'; p++){
-		transmitByte(*p);
+		transmitByte_USART2(*p);
 	}
+}
 
+void printMsgNL_USART2(char *message, ...)
+{
+	char buff[128];
 
+	va_list args;
+	va_start(args, message);
+	vsnprintf(buff,sizeof(buff),message, args);
+
+	va_end(args);
+
+	for(char *p = buff; *p != '\0'; p++){
+		transmitByte_USART2(*p);
+	}
+	transmitByte_USART2(CARRIAGE_RETURN);
+	transmitByte_USART2(NEW_LINE);
+}
+
+void transmitByte_USART2(const char byte)
+{
+	//write data in the USART_TDR register. Check the USART_ISR -> TC bit before sending next data frame
+	while(!(USART2->ISR & USART_ISR_TC))
+		;
+
+	WRITE_REG(USART2->TDR, byte);
 }
 
 /*
@@ -78,11 +104,3 @@ void printMsg(char *message)
 }
 */
 
-void transmitByte(const char byte)
-{
-	//write data in the USART_TDR register. Check the USART_ISR -> TC bit before sending next data frame
-	while(!(USART2->ISR & USART_ISR_TC))
-		;
-
-	WRITE_REG(USART2->TDR, byte);
-}

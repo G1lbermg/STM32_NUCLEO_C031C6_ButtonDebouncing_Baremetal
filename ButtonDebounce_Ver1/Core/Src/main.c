@@ -17,10 +17,10 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "usart2_BSP.h"
 #include "button_BSP.h"
-#include "error_check_utilities.h"
 #include "led_BSP.h"
-#include "uart_BSP.h"
+#include "error_check_utilities.h"
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -118,7 +118,7 @@ int main(void)
   Button_t Button1;
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
-//  initUART();
+  initUSART2();
 
 
   /* USER CODE END 2 */
@@ -138,6 +138,7 @@ int main(void)
 
 	buttonState = readButton(&Button1);
 	if(buttonState == 0){
+		printMsgNL_USART2("Button pressed!");
 		turn_On_LED(&LED1);
 		LL_mDelay(200);
 	}
