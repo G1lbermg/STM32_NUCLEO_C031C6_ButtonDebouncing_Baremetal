@@ -23,7 +23,7 @@ typedef enum
     E_CLOCK_SYSCLK_NOT_READY      = -102,   // System Clock failed to switch to the desired source
     E_CLOCK_INVALID_CONFIG        = -103,   // Configuration parameters (PLL, prescalers) are invalid
 
-    // --- 2. GPIO/LED Module Errors (-200 to -299) ---
+    // --- 2. GPIO/LED/Button Module Errors (-200 to -299) ---
     E_GPIO_INVALID_PORT           = -201,   // Invalid GPIO Port passed (e.g., NULL)
     E_GPIO_INVALID_PIN            = -202,   // Pin number out of the 0-15 range
     E_GPIO_INIT_FAILED            = -203,   // General initialization failure (e.g., clock enable failure)

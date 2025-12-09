@@ -2,8 +2,8 @@
 #define LED_BSP_H
 
 #include "stm32c0xx.h"
-#include <stdint.h>
 #include "error_codes.h"
+#include <stdint.h>
 
 typedef struct {
     GPIO_TypeDef *port;

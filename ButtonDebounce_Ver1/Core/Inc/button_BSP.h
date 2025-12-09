@@ -2,10 +2,17 @@
 #define BUTTON_BSP_H
 
 #include "stm32c0xx.h"
+#include "error_codes.h"
 #include <stdint.h>
 
-uint8_t initButton(GPIO_TypeDef *port, uint8_t pinNum);
-uint8_t readButton(GPIO_TypeDef *port, uint8_t pinNum, uint16_t *inputData);
+typedef struct {
+    GPIO_TypeDef *port;
+    uint16_t readMask;
+
+} Button_t;
+
+ErrorCode_t initButton(Button_t *button,GPIO_TypeDef *port, uint8_t pinNum);
+uint16_t readButton(Button_t *button);
 
 
 #endif

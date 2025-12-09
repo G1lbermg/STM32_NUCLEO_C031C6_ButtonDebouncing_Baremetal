@@ -115,7 +115,8 @@ int main(void)
   LED_t LED1;
   check_Error((init_LED(&LED1,GPIOA, PIN_5)), __FILE__, __LINE__);
 
-  initButton(GPIOC, PIN_13);
+  Button_t Button1;
+  check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
 //  initUART();
 
@@ -135,8 +136,7 @@ int main(void)
 
 	turn_Off_LED(&LED1);
 
-
-	readButton(GPIOC, PIN_13, &buttonState);
+	buttonState = readButton(&Button1);
 	if(buttonState == 0){
 		turn_On_LED(&LED1);
 		LL_mDelay(200);
