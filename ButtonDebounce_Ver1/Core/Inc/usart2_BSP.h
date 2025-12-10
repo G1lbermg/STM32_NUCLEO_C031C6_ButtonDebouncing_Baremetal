@@ -7,12 +7,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "error_codes.h"
 
-void initUSART2(void);
-void printMsg_USART2(char *message, ...);
-void printMsgNL_USART2(char *message, ...);
-void transmitByte_USART2(const char byte);
-
-//void printMsg(char *message);
+ErrorCode_t initUSART2(void);
+ErrorCode_t printMsg_USART2(char *message, ...);
+ErrorCode_t printMsgNL_USART2(char *message, ...);
+ErrorCode_t transmitByte_USART2(const char byte);
 
 #endif

@@ -29,6 +29,13 @@ typedef enum
     E_GPIO_INIT_FAILED            = -203,   // General initialization failure (e.g., clock enable failure)
     E_LED_WRITE_FAIL              = -204,   // Specific error during a turnOn/turnOff call
 
+	// --- 3. USART/Communication Errors (-300 to -399) ---
+	E_USART_INIT_FAILED           = -301,   // General failure during USART peripheral initialization
+	E_USART_TX_TIMEOUT            = -302,   // Transmit operation timed out waiting for the TDR to be empty
+	E_USART_INVALID_HANDLE        = -303,   // The provided USART handle/pointer is NULL or invalid
+	E_USART_CLOCK_ENABLE_FAILED   = -304,   // Failed to enable the necessary clock for the USART module
+	E_USART_BUFFER_OVERFLOW       = -305,   // Formatted message was truncated due to buffer size (128 bytes)
+
     // --- Add more here as your project grows ---
 
 } ErrorCode_e;

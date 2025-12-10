@@ -118,8 +118,7 @@ int main(void)
   Button_t Button1;
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
-  initUSART2();
-
+  check_Error( initUSART2(), __FILE__, __LINE__);
 
   /* USER CODE END 2 */
 
@@ -138,7 +137,7 @@ int main(void)
 
 	buttonState = readButton(&Button1);
 	if(buttonState == 0){
-		printMsgNL_USART2("Button pressed!");
+		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
 		turn_On_LED(&LED1);
 		LL_mDelay(200);
 	}
