@@ -28,7 +28,7 @@ ErrorCode_t initButton(Button_t *button, GPIO_TypeDef *port, uint8_t pinNum)
 	}
 
 		/****************************Pin Setup*****************************/
-    //Set button as input with pull up resistor, low speed
+    //Set button as input with pull up resistor
 	port->MODER &= ~((1 << (pinNum * 2)) | (1 << (pinNum * 2 + 1)));
 
 	port->PUPDR &= ~((1 << (pinNum * 2)) | (1 << (pinNum * 2 + 1)));

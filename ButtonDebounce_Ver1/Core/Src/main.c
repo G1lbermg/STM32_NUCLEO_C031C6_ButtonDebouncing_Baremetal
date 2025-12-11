@@ -57,6 +57,7 @@
 #define PIN_14 0xEU
 #define PIN_15 0xFU
 
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -112,14 +113,16 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
+  check_Error( initUSART2(), __FILE__, __LINE__);
+  Init_Error_Utilities_Logging(printMsgNL_USART2);
+
   LED_t LED1;
   check_Error((init_LED(&LED1,GPIOA, PIN_5)), __FILE__, __LINE__);
 
   Button_t Button1;
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
-  check_Error( initUSART2(), __FILE__, __LINE__);
-
+  check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
   /* USER CODE END 2 */
 
   /* Infinite loop */

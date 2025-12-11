@@ -25,7 +25,7 @@ ErrorCode_t initUSART2(void)
 	CLEAR_BIT(USART2->CR1, USART_CR1_M1);
 	CLEAR_BIT(USART2->CR1, USART_CR1_M0);
 
-	//Set oversampling to 16
+	//Set over-sampling to 16
 	CLEAR_BIT(USART2->CR1, USART_CR1_OVER8);
 
 	//Define Baud rate
@@ -48,7 +48,7 @@ ErrorCode_t initUSART2(void)
 ErrorCode_t printMsg_USART2(char *message, ...)
 {
 	if (message == NULL) {
-	        return E_INVALID_ARGUMENT; // Input validation
+	        return E_INVALID_ARGUMENT;
 	}
 
 	char buff[128];
@@ -79,7 +79,7 @@ ErrorCode_t printMsg_USART2(char *message, ...)
 ErrorCode_t printMsgNL_USART2(char *message, ...)
 {
 	if (message == NULL) {
-	        return E_INVALID_ARGUMENT; // Input validation
+	        return E_INVALID_ARGUMENT;
 	}
 
 	char buff[128];
@@ -99,16 +99,17 @@ ErrorCode_t printMsgNL_USART2(char *message, ...)
 	for(char *p = buff; *p != '\0'; p++){
 		// Error will be propagated to main
 		tx_err = transmitByte_USART2(*p);
-	    if (tx_err != E_OK) {
+	    if (tx_err != E_OK)
 	    	return tx_err;
-	    }
 	}
 
 	tx_err = transmitByte_USART2(CARRIAGE_RETURN);
-	if (tx_err != E_OK) return tx_err;
+	if (tx_err != E_OK)
+		return tx_err;
 
 	tx_err = transmitByte_USART2(NEW_LINE);
-	if (tx_err != E_OK) return tx_err;
+	if (tx_err != E_OK)
+		return tx_err;
 
 	return err;
 }
@@ -121,9 +122,10 @@ ErrorCode_t transmitByte_USART2(const char byte)
 	//write data in the USART_TDR register. Check the USART_ISR -> TC bit before sending next data frame
 	while(!(USART2->ISR & USART_ISR_TC)){
 		// If transmit takes too long then timeout
-		if (timeout_counter++ > MAX_TIMEOUT) {
+		if (timeout_counter > MAX_TIMEOUT) {
 			return E_USART_TX_TIMEOUT;
 		}
+		timeout_counter++;
 	}
 	WRITE_REG(USART2->TDR, byte);
 
