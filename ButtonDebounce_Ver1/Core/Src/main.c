@@ -63,6 +63,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+static LED_t Err_LED;
 
 /* USER CODE END PV */
 
@@ -70,10 +71,31 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
+ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum);
+void turn_On_ErrorLED(void);
+void turn_Off_ErrorLED(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/*********Error LED functions*********************/
+ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum)
+{
+	ErrorCode_t code = init_LED(&Err_LED, port, pinNum);
+
+	return code;
+}
+
+void turn_On_ErrorLED(void)
+{
+	turn_On_LED(&Err_LED);
+}
+void turn_Off_ErrorLED(void)
+{
+	turn_Off_LED(&Err_LED);
+}
 
 /* USER CODE END 0 */
 
@@ -129,6 +151,7 @@ int main(void)
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
   check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
+
   //-------------------------------------------------------------------------
   /* USER CODE END 2 */
 
@@ -142,6 +165,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 	turn_Off_LED(&LED1);
+
 
 	readButton(&Button1, &buttonState);
 	if(buttonState == 0){

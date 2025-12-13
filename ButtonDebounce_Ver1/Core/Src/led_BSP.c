@@ -1,26 +1,5 @@
 #include <led_BSP.h>
 
-
-/*********Error LED functions*********************/
-
-static LED_t Err_LED;
-
-ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum)
-{
-	ErrorCode_t code = init_LED(&Err_LED, port, pinNum);
-
-	return code;
-}
-
-void turn_On_ErrorLED(void)
-{
-	turn_On_LED(&Err_LED);
-}
-void turn_Off_ErrorLED(void)
-{
-	turn_Off_LED(&Err_LED);
-}
-
 /*********General LED functions*********************/
 
 ErrorCode_t init_LED(LED_t *led, GPIO_TypeDef *port, uint8_t pinNum)
