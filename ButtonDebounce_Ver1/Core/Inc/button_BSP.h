@@ -12,7 +12,7 @@ typedef struct {
 } Button_t;
 
 ErrorCode_t initButton(Button_t *button,GPIO_TypeDef *port, uint8_t pinNum);
-uint16_t readButton(Button_t *button);
+ErrorCode_t readButton(Button_t *button, uint16_t *readData);
 
 
 #endif

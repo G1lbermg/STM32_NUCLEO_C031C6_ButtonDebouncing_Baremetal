@@ -12,7 +12,12 @@ typedef struct {
 } LED_t;
 
 ErrorCode_t init_LED(LED_t *led,GPIO_TypeDef *port, uint8_t pinNum);
-void turn_On_LED(LED_t *led);
-void turn_Off_LED(LED_t *led);
+ErrorCode_t turn_On_LED(LED_t *led);
+ErrorCode_t turn_Off_LED(LED_t *led);
+
+/*********Error LED functions*********************/
+ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum);
+void turn_On_ErrorLED(void);
+void turn_Off_ErrorLED(void);
 
 #endif

@@ -2,6 +2,10 @@
 
 ErrorCode_t initButton(Button_t *button, GPIO_TypeDef *port, uint8_t pinNum)
 {
+	//Check for NULL Pointer
+	if(button == 0)
+		return E_INVALID_ARGUMENT;
+
 	//Check if the pin is valid
 	if(pinNum > 15)
 		return E_GPIO_INVALID_PIN;;
@@ -42,9 +46,15 @@ ErrorCode_t initButton(Button_t *button, GPIO_TypeDef *port, uint8_t pinNum)
 }
 
 
-uint16_t readButton(Button_t *button)
+ErrorCode_t readButton(Button_t *button, uint16_t *readData)
 {
-	return (button->port->IDR & button->readMask);
+	//Check for NULL Pointer
+	if(button == 0 || readData == 0)
+		return E_INVALID_ARGUMENT;
+
+	*readData = (button->port->IDR & button->readMask);
+
+	return E_OK;
 }
 
 

@@ -1,7 +1,34 @@
 #include <led_BSP.h>
 
+
+/*********Error LED functions*********************/
+
+static LED_t Err_LED;
+
+ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum)
+{
+	ErrorCode_t code = init_LED(&Err_LED, port, pinNum);
+
+	return code;
+}
+
+void turn_On_ErrorLED(void)
+{
+	turn_On_LED(&Err_LED);
+}
+void turn_Off_ErrorLED(void)
+{
+	turn_Off_LED(&Err_LED);
+}
+
+/*********General LED functions*********************/
+
 ErrorCode_t init_LED(LED_t *led, GPIO_TypeDef *port, uint8_t pinNum)
 {
+	//Check for NULL Pointer
+	if(led == 0)
+		return E_INVALID_ARGUMENT;
+
 	//Check if the pin is valid
 	if(pinNum > 15U)
 		return E_GPIO_INVALID_PIN;
@@ -48,13 +75,28 @@ ErrorCode_t init_LED(LED_t *led, GPIO_TypeDef *port, uint8_t pinNum)
 	return E_OK;
 }
 
-void turn_On_LED(LED_t *led)
+ErrorCode_t turn_On_LED(LED_t *led)
 {
-	 led->port->BSRR = led->setMask;
+	//Check for NULL Pointer
+	if(led == 0)
+		return E_INVALID_ARGUMENT;
+
+	led->port->BSRR = led->setMask;
+
+	return E_OK;
+
 }
 
-void turn_Off_LED(LED_t *led)
+ErrorCode_t turn_Off_LED(LED_t *led)
 {
+	//Check for NULL Pointer
+	if(led == 0)
+		return E_INVALID_ARGUMENT;
+
 	led->port->BSRR = led->resetMask;
+
+	return E_OK;
 }
+
+
 

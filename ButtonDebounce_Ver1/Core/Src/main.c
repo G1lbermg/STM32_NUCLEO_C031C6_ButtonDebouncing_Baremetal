@@ -113,9 +113,15 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
+  //------------------Setting Up Error Utilities-----------------------------
+  check_Error((init_ErrorLED(GPIOA, PIN_9)), __FILE__, __LINE__);
+  init_Error_LED_ON(turn_On_ErrorLED);
+
   check_Error( initUSART2(), __FILE__, __LINE__);
   Init_Error_Utilities_Logging(printMsgNL_USART2);
 
+
+  //------------------Setting Up Peripherals-----------------------------
   LED_t LED1;
   check_Error((init_LED(&LED1,GPIOA, PIN_5)), __FILE__, __LINE__);
 
@@ -123,12 +129,11 @@ int main(void)
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
   check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
+  //-------------------------------------------------------------------------
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-
   uint16_t buttonState;
   while (1)
   {
@@ -138,7 +143,7 @@ int main(void)
 
 	turn_Off_LED(&LED1);
 
-	buttonState = readButton(&Button1);
+	readButton(&Button1, &buttonState);
 	if(buttonState == 0){
 		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
 		turn_On_LED(&LED1);
