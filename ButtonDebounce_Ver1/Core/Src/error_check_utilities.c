@@ -1,30 +1,28 @@
 #include "error_check_utilities.h"
 
-// --- ERROR LED ---------------------------------------------------
-#ifdef ERROR_LED_ENABLE
+/********************** Hardware Error Indicator *******************************************/
+#ifdef HW_ERR_INDICATE_ENABLE
 
  // This function prevents null pointer crashes if the user doesn't initialize LED_ON function
-static void Default_LED_On(void)
+static void Default_HW_Indicate_On(void)
 {
 	(void) 0;
 }
 
-void (*Err_LED_On)(void) = Default_LED_On;
+static void (*HW_Indicate_On)(void) = Default_HW_Indicate_On;
 
-void init_Error_LED_ON(void(*On_Function)(void))
+void Config_HW_Err_Indicator(void(*On_Function)(void))
 {
 	// Only update if the user passed a valid function
 		if (On_Function != 0)
-			Err_LED_On = On_Function;
+			HW_Indicate_On = On_Function;
 		else
-			Err_LED_On = Default_LED_On;
+			HW_Indicate_On = Default_HW_Indicate_On;
 }
 
 #endif
 
-
-
-// --- ERROR Logger ---------------------------------------------------
+/************************ Error Logger ******************************************************/
 #ifdef LOGGING_ENABLE
 
 
@@ -36,7 +34,7 @@ static ErrorCode_t Default_Log_Function(char *message, ...)
  }
 
 
-ErrorCode_t (*Central_Log_Function)(char *, ...) = Default_Log_Function;
+static ErrorCode_t (*Central_Log_Function)(char *, ...) = Default_Log_Function;
 
  //Initialize Error Utilities Logging
  void Init_Error_Utilities_Logging(ErrorCode_t (*printFxn)(char *, ...))
@@ -49,14 +47,14 @@ ErrorCode_t (*Central_Log_Function)(char *, ...) = Default_Log_Function;
 
 #endif
 
-// --- CENTRAL ERROR HANDLER ---------------------------------------------------
+/**************** CENTRAL ERROR HANDLER *********************************************/
 void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
 {
- /********************** 1. Identify Logging Critical Failure ***********************/
+ //------------------- 1. Identify Logging Critical Failure -----------------------
     if (errorCode == E_USART_INIT_FAILED || errorCode == E_USART_CLOCK_ENABLE_FAILED) {
 
-		#ifdef ERROR_LED_ENABLE
-    	Err_LED_On();
+		#ifdef HW_ERR_INDICATE_ENABLE
+    	HW_Indicate_On();
 		#endif
 
         // Skip all logging and enter safe state
@@ -69,9 +67,9 @@ void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
         }
     }
 
- /************* 2. LOGGING IS POSSIBLE (Proceed with Tiered Policy) *******************/
+ //---------- 2. LOGGING IS POSSIBLE (Proceed with Tiered Policy) -----------------
 
-    // --- POLICY TIER 2: MINOR/WARNINGS (Log and Continue) ---
+    // ++++++++ POLICY TIER 2: MINOR/WARNINGS (Log and Continue) ++++++++++++
     if (errorCode == E_INVALID_ARGUMENT || errorCode == E_USART_BUFFER_OVERFLOW) {
 
     	#ifdef LOGGING_ENABLE
@@ -81,7 +79,7 @@ void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
         return;
     }
 
-    // --- POLICY TIER 1: MAJOR/RETRYABLE ERRORS (Log and Continue/Notify) ---
+    // +++++ POLICY TIER 1: MAJOR/RETRYABLE ERRORS (Log and Continue/Notify) +++++
     if (errorCode == E_USART_TX_TIMEOUT || errorCode == E_GPIO_INIT_FAILED) {
 
 		#ifdef LOGGING_ENABLE
@@ -92,15 +90,15 @@ void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
         return;
     }
 
-    // --- POLICY TIER 0: CRITICAL/FATAL ERRORS (Log and HALT) ---
+    // +++++ POLICY TIER 0: CRITICAL/FATAL ERRORS (Log and HALT) ++++++++
     // Any error not caught above (e.g., clock errors, generic errors) is fatal.
 	#ifdef LOGGING_ENABLE
     Central_Log_Function("FATAL ERROR: Code %d at %s:%d", errorCode, file, line);
 	#endif
 
     // Enter Safe State and Halt
-	#ifdef ERROR_LED_ENABLE
-	Err_LED_On();
+	#ifdef HW_ERR_INDICATE_ENABLE
+    HW_Indicate_On();
 	#endif
 
     __disable_irq();

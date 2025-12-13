@@ -115,7 +115,7 @@ int main(void)
 
   //------------------Setting Up Error Utilities-----------------------------
   check_Error((init_ErrorLED(GPIOA, PIN_9)), __FILE__, __LINE__);
-  init_Error_LED_ON(turn_On_ErrorLED);
+  Config_HW_Err_Indicator(turn_On_ErrorLED);
 
   check_Error( initUSART2(), __FILE__, __LINE__);
   Init_Error_Utilities_Logging(printMsgNL_USART2);

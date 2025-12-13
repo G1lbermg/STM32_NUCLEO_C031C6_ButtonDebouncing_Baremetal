@@ -14,7 +14,7 @@ static inline void check_Error(ErrorCode_t result, const char *file, int line) {
     }
 }
 
-/********************Uncomment the error tools being used*****************************/
+/********************Comment or Uncomment the error tools as needed*****************************/
 
 /***************ERROR MESSAGING*****************/
 //Comment or uncomment depending on whether or not it's needed
@@ -22,20 +22,21 @@ static inline void check_Error(ErrorCode_t result, const char *file, int line) {
 
 #ifdef LOGGING_ENABLE
 
-extern ErrorCode_t (*Central_Log_Function)(char *, ...);
+//The function provided will be used by the Central Error Handler
+//to log hardware faults
 void Init_Error_Utilities_Logging(ErrorCode_t (*printFxn)(char *, ...));
 
 #endif
 
-/***************LED INDICATORS*****************/
+/***************Hardware Error Indicators*****************/
 //Comment or uncomment depending on whether or not it's needed
-#define ERROR_LED_ENABLE
+#define HW_ERR_INDICATE_ENABLE
 
+#ifdef HW_ERR_INDICATE_ENABLE
 
-#ifdef ERROR_LED_ENABLE
-
-extern void (*Err_LED_On)(void);
-void init_Error_LED_ON(void(*On_Function)(void));
+//The function provided will be used by the Central Error Handler
+//to enable the  hardware level error indication
+void Config_HW_Err_Indicator(void(*On_Function)(void));
 
 #endif
 /**************************************************************************************/
