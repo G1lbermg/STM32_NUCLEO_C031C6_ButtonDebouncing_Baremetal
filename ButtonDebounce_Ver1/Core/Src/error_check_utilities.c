@@ -50,6 +50,14 @@ static ErrorCode_t (*Central_Log_Function)(char *, ...) = Default_Log_Function;
 /**************** CENTRAL ERROR HANDLER *********************************************/
 void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
 {
+ //Double check file pointer
+	const char *log_file_ptr;
+	if(file == 0)
+		log_file_ptr = "UNKNOWN FILE";
+	else
+		log_file_ptr = file;
+
+
  //------------------- 1. Identify Logging Critical Failure -----------------------
     if (errorCode == E_USART_INIT_FAILED || errorCode == E_USART_CLOCK_ENABLE_FAILED) {
 
@@ -73,7 +81,7 @@ void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
     if (errorCode == E_INVALID_ARGUMENT || errorCode == E_USART_BUFFER_OVERFLOW) {
 
     	#ifdef LOGGING_ENABLE
-        Central_Log_Function("WARNING: Code %d at %s:%d", errorCode, file, line);
+        Central_Log_Function("WARNING: Code %d at %s,line:%d", errorCode, log_file_ptr, line);
 		#endif
 
         return;
@@ -83,7 +91,7 @@ void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
     if (errorCode == E_USART_TX_TIMEOUT || errorCode == E_GPIO_INIT_FAILED) {
 
 		#ifdef LOGGING_ENABLE
-    	Central_Log_Function("MAJOR ERROR: Code %d at %s:%d", errorCode, file, line);
+    	Central_Log_Function("MAJOR ERROR: Code %d at %s,line:%d", errorCode, log_file_ptr, line);
 		#endif
 
         // This function RETURNS, allowing the main loop to continue.
@@ -93,7 +101,7 @@ void Central_Error_Handler(ErrorCode_t errorCode, const char *file, int line)
     // +++++ POLICY TIER 0: CRITICAL/FATAL ERRORS (Log and HALT) ++++++++
     // Any error not caught above (e.g., clock errors, generic errors) is fatal.
 	#ifdef LOGGING_ENABLE
-    Central_Log_Function("FATAL ERROR: Code %d at %s:%d", errorCode, file, line);
+    Central_Log_Function("FATAL ERROR: Code %d at %s,line:%d", errorCode, log_file_ptr, line);
 	#endif
 
     // Enter Safe State and Halt

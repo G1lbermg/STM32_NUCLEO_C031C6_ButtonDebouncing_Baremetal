@@ -57,6 +57,9 @@
 #define PIN_14 0xEU
 #define PIN_15 0xFU
 
+#define PRESSED 0x1U
+#define NOT_PRESSED 0x0U
+
 
 /* USER CODE END PM */
 
@@ -157,7 +160,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint16_t buttonState;
+  uint16_t buttonState = NOT_PRESSED;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -166,9 +169,8 @@ int main(void)
 
 	turn_Off_LED(&LED1);
 
-
 	readButton(&Button1, &buttonState);
-	if(buttonState == 0){
+	if(buttonState == PRESSED){
 		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
 		turn_On_LED(&LED1);
 		LL_mDelay(200);
