@@ -17,11 +17,11 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <errorCheckUtilities.h>
+#include "usart2_BSP.h"
+#include "button_BSP.h"
+#include "led_BSP.h"
+#include "error_check_utilities.h"
 #include "main.h"
-#include "buttonBSP.h"
-#include "ledBSP.h"
-#include "uartBSP.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -57,11 +57,16 @@
 #define PIN_14 0xEU
 #define PIN_15 0xFU
 
+#define NOT_PRESSED 0x1U
+#define PRESSED 0x0U
+
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+static LED_t Err_LED;
 
 /* USER CODE END PV */
 
@@ -69,10 +74,31 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
+ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum);
+void turn_On_ErrorLED(void);
+void turn_Off_ErrorLED(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/*********Error LED functions*********************/
+ErrorCode_t init_ErrorLED(GPIO_TypeDef *port, uint8_t pinNum)
+{
+	ErrorCode_t code = init_LED(&Err_LED, port, pinNum);
+
+	return code;
+}
+
+void turn_On_ErrorLED(void)
+{
+	turn_On_LED(&Err_LED);
+}
+void turn_Off_ErrorLED(void)
+{
+	turn_Off_LED(&Err_LED);
+}
 
 /* USER CODE END 0 */
 
@@ -112,31 +138,41 @@ int main(void)
   /* Initialize all configured peripherals */
   /* USER CODE BEGIN 2 */
 
-  initLED(GPIOA, PIN_7);
-  initButton(GPIOA, PIN_6);
+  //------------------Setting Up Error Utilities-----------------------------
+  check_Error((init_ErrorLED(GPIOA, PIN_9)), __FILE__, __LINE__);
+  Config_HW_Err_Indicator(turn_On_ErrorLED);
 
-//  initUART();
+  check_Error( initUSART2(), __FILE__, __LINE__);
+  Init_Error_Utilities_Logging(printMsgNL_USART2);
 
 
+  //------------------Setting Up Peripherals-----------------------------
+  LED_t LED1;
+  check_Error((init_LED(&LED1,GPIOA, PIN_5)), __FILE__, __LINE__);
+
+  Button_t Button1;
+  check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
+
+  check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
+
+  //-------------------------------------------------------------------------
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-
-  uint16_t buttonState;
+  uint16_t buttonState = NOT_PRESSED;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-	turnOffLED(GPIOA, PIN_7);
+	turn_Off_LED(&LED1);
 
-
-	readButton(GPIOA, PIN_6, &buttonState);
-	if(buttonState == 0){
-		turnOnLED(GPIOA, PIN_7);
+	readButton(&Button1, &buttonState);
+	if(buttonState == PRESSED){
+		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
+		turn_On_LED(&LED1);
 		LL_mDelay(200);
 	}
 
@@ -188,10 +224,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+	Central_Error_Handler(E_ERROR_GENERIC, __FILE__, __LINE__);
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
