@@ -57,8 +57,8 @@
 #define PIN_14 0xEU
 #define PIN_15 0xFU
 
-#define PRESSED 0x1U
-#define NOT_PRESSED 0x0U
+#define NOT_PRESSED 0x1U
+#define PRESSED 0x0U
 
 
 /* USER CODE END PM */
