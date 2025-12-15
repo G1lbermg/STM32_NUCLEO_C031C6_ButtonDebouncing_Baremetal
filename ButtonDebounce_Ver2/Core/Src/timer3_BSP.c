@@ -1,9 +1,11 @@
 #include "timer3_BSP.h"
 
-#define PSC_VALUE 7499U
-#define ARR_VALUE 6399U
+#define PSC_VALUE 479U
+#define ARR_VALUE 99U
 
-uint32_t volatile timeCounter3 = 0U;
+//Counter records the number of ms elapsed since start of program.
+//Good up to ~49.772 days
+static uint32_t volatile timer3Counter = 0U;
 
 void TIM3_IRQHandler(void)
 {
@@ -13,7 +15,7 @@ void TIM3_IRQHandler(void)
 	CLEAR_BIT(TIM3->SR, TIM_SR_UIF);
 
 	//Increment timer
-	timeCounter3++;
+	timer3Counter++;
 
 	__enable_irq();
 }
@@ -33,7 +35,7 @@ void initTmr3(void)
 	//Enable UEV(update events)
 	CLEAR_BIT(TIM3->CR1,TIM_CR1_UDIS);
 
-	//Set prescaler to 7499, arr to 6399 to achieve 1Hz update frequency
+	//Set prescaler to 479, arr to 99 to achieve 1kHz update frequency (1ms overflow event)
 	WRITE_REG(TIM3->PSC,PSC_VALUE);
 	WRITE_REG(TIM3->ARR, ARR_VALUE);
 
@@ -53,15 +55,47 @@ void initTmr3(void)
 	SET_BIT(TIM3->CR1, TIM_CR1_CEN);
 }
 
+void elapsedTimeMs_Tmr3(uint32_t *milli_seconds)
+{
+	uint32_t readTime;
+    // Read the current time of the counter
 
+	__disable_irq();
+	readTime = timer3Counter;
+	__enable_irq();
 
-void delay1Sec(void)
+	*milli_seconds = readTime;
+}
+
+void delayMS_Tmr3(uint32_t milli_seconds)
+{
+	uint32_t startTime, currentTime;
+
+	// Establish a starting time
+	elapsedTimeMs_Tmr3(&startTime);
+
+	// The only time we need to disable IRQs is when reading timeCounter3.
+	while(1) // Loop forever until condition is met
+	{
+        // Read the current time
+		elapsedTimeMs_Tmr3(&currentTime);
+
+        // Check condition
+        if (currentTime - startTime >= milli_seconds)
+        {
+            break; // Exit the function after 1000 milli-seconds have passed
+        }
+	}
+}
+
+/*
+void delayMS(uint32_t milli_seconds)
 {
 	uint32_t startTime;
 
     // Read the starting time in a single critical section
 	__disable_irq();
-	startTime = timeCounter3;
+	startTime = timer3Counter;
 	__enable_irq();
 
 	// The only time we need to disable IRQs is when reading timeCounter3.
@@ -71,64 +105,15 @@ void delay1Sec(void)
 
         // Read the current time (critical section around a single 32-bit read)
 		__disable_irq();
-		currentTime = timeCounter3;
+		currentTime = timer3Counter;
 		__enable_irq();
 
         // Check condition
-        if (currentTime - startTime >= 1U)
+        if (currentTime - startTime >= milli_seconds)
         {
-            break; // Exit the function after 1 second has passed
+            break; // Exit the function after 1000 milli-seconds have passed
         }
 	}
 }
-/**************************** Polling based code **********************/
 
-/*
- #include "timer3_BSP.h"
-
-
-#define PSC_VALUE 7499U
-#define ARR_VALUE 6399U
-
-
-void initTmr3(void)
-
-{
-	//Enable timer 3 clock gate
-	SET_BIT(RCC->APBENR1,RCC_APBENR1_TIM3EN);
-
-	//Set to up counting
-	CLEAR_BIT(TIM3->CR1, TIM_CR1_DIR);
-
-	//Update request only at counter overflow/underflow
-	SET_BIT(TIM3->CR1, TIM_CR1_URS);
-
-	//Enable UEV(update events)
-	CLEAR_BIT(TIM3->CR1,TIM_CR1_UDIS);
-
-
-	//Set prescaler to 7499, arr to 6399 to achieve 1Hz update frequency
-	WRITE_REG(TIM3->PSC,PSC_VALUE);
-	WRITE_REG(TIM3->ARR, ARR_VALUE);
-
-
-	//Force update to registers
-	WRITE_REG(TIM3->EGR,TIM_EGR_UG);
-
-	//Enable the counter
-	SET_BIT(TIM3->CR1, TIM_CR1_CEN);
-}
-
-
-void delay1Sec(void)
-
-{
-	// Clear the Update Interrupt Flag (UIF) if it was set by the UEV
-	CLEAR_BIT(TIM3->SR, TIM_SR_UIF);
-
-	//Poll until 1 second has passed by
-	while(READ_BIT(TIM3->SR, TIM_SR_UIF) != 1)
-		;
-}
-
- */
+*/

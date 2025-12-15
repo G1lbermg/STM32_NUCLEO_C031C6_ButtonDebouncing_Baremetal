@@ -7,6 +7,7 @@
 
 void initTmr3(void);
 
-void delay1Sec(void);
+void delayMS_Tmr3(uint32_t milli_seconds);
+void elapsedTimeMs_Tmr3(uint32_t *milli_seconds);
 
 #endif

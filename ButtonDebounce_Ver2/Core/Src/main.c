@@ -17,6 +17,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "timer3_BSP.h"
 #include "usart2_BSP.h"
 #include "button_BSP.h"
 #include "led_BSP.h"
@@ -59,6 +60,8 @@
 
 #define NOT_PRESSED 0x1U
 #define PRESSED 0x0U
+#define DEBOUNCE_TIME 200U
+#define LED_ON_TIME 200U
 
 
 /* USER CODE END PM */
@@ -153,6 +156,8 @@ int main(void)
   Button_t Button1;
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
+  initTmr3();
+
   check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
 
   //-------------------------------------------------------------------------
@@ -160,22 +165,37 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   uint16_t buttonState = NOT_PRESSED;
+  uint32_t currentTime,startTime;
+
+  elapsedTimeMs_Tmr3(&currentTime);
+  elapsedTimeMs_Tmr3(&startTime);
+
+  printMsgNL_USART2("ElapsedTime: %u",startTime);
+
+  turn_Off_LED(&LED1);
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 
-	turn_Off_LED(&LED1);
-
-	readButton(&Button1, &buttonState);
-	if(buttonState == PRESSED){
-		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
-		turn_On_LED(&LED1);
-		LL_mDelay(200);
+	//Turn off LED after alloted time
+	elapsedTimeMs_Tmr3(&currentTime);
+	if((currentTime-startTime) >= LED_ON_TIME){
+		turn_Off_LED(&LED1);
 	}
 
+	//Register a button press then ignore everything else within debounce period
+	readButton(&Button1, &buttonState);
+	if(buttonState == PRESSED &&
+			((currentTime-startTime) >= DEBOUNCE_TIME)){
+
+		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
+		turn_On_LED(&LED1);
+		elapsedTimeMs_Tmr3(&startTime);
+	}
   }
   /* USER CODE END 3 */
 }
