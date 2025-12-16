@@ -63,6 +63,8 @@
 #define DEBOUNCE_TIME 200U
 #define LED_ON_TIME 200U
 
+#define TMR3_FREQ 1000U
+
 
 /* USER CODE END PM */
 
@@ -156,7 +158,7 @@ int main(void)
   Button_t Button1;
   check_Error(initButton(&Button1,GPIOC, PIN_13), __FILE__,__LINE__);
 
-  initTmr3();
+  check_Error(initTmr3(TMR3_FREQ),__FILE__,__LINE__);
 
   check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
 
@@ -169,12 +171,10 @@ int main(void)
   uint16_t buttonState = NOT_PRESSED;
   uint32_t currentTime,startTime;
 
-  elapsedTimeMs_Tmr3(&currentTime);
-  elapsedTimeMs_Tmr3(&startTime);
+  check_Error(elapsedTicks_Tmr3(&currentTime),__FILE__,__LINE__);
+  check_Error(elapsedTicks_Tmr3(&startTime),__FILE__,__LINE__);
 
-  printMsgNL_USART2("ElapsedTime: %u",startTime);
-
-  turn_Off_LED(&LED1);
+  check_Error(turn_Off_LED(&LED1),__FILE__,__LINE__);
   while (1)
   {
     /* USER CODE END WHILE */
@@ -182,19 +182,19 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
 	//Turn off LED after alloted time
-	elapsedTimeMs_Tmr3(&currentTime);
+	elapsedTicks_Tmr3(&currentTime);
 	if((currentTime-startTime) >= LED_ON_TIME){
-		turn_Off_LED(&LED1);
+		  check_Error(turn_Off_LED(&LED1),__FILE__,__LINE__);
 	}
 
 	//Register a button press then ignore everything else within debounce period
-	readButton(&Button1, &buttonState);
+	check_Error(readButton(&Button1, &buttonState),__FILE__,__LINE__);
 	if(buttonState == PRESSED &&
 			((currentTime-startTime) >= DEBOUNCE_TIME)){
 
 		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
-		turn_On_LED(&LED1);
-		elapsedTimeMs_Tmr3(&startTime);
+		check_Error(turn_On_LED(&LED1),__FILE__,__LINE__);
+		check_Error(elapsedTicks_Tmr3(&startTime),__FILE__,__LINE__);
 	}
   }
   /* USER CODE END 3 */

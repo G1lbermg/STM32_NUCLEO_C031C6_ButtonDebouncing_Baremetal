@@ -1,7 +1,7 @@
 #include "timer3_BSP.h"
 
-#define PSC_VALUE 479U
 #define ARR_VALUE 99U
+#define TMR_TICK_DIVISOR (ARR_VALUE +1)
 
 //Counter records the number of ms elapsed since start of program.
 //Good up to ~49.772 days
@@ -20,9 +20,30 @@ void TIM3_IRQHandler(void)
 	__enable_irq();
 }
 
-
-void initTmr3(void)
+//Initialization code to setup a timer given a System core clock of 48Mhz
+ErrorCode_t initTmr3(uint32_t targetFreqHz)
 {
+//------1. PSC value calculations---------
+	//Check that target frequency is within bounds
+	if (targetFreqHz == 0)
+		return E_INVALID_ARGUMENT;
+
+	if(targetFreqHz > (SystemCoreClock/TMR_TICK_DIVISOR))
+        return E_TIMER_FREQ_TOO_HIGH;
+
+	//Caclulate and check that the psc value is within bounds
+	uint32_t pscPlusOne = SystemCoreClock/(TMR_TICK_DIVISOR * targetFreqHz);
+
+	if(pscPlusOne == 0)
+		return E_TIMER_CALC_ERROR;
+
+	uint32_t pscValue = pscPlusOne -1;
+
+	// Check if the calculated PSC value fits in the 16-bit register
+	if (pscValue > 0xFFFF)
+		return E_TIMER_FREQ_TOO_LOW;
+
+//------2. Hardware register setup---------
 	//Enable timer 3 clock gate
 	SET_BIT(RCC->APBENR1,RCC_APBENR1_TIM3EN);
 
@@ -32,12 +53,12 @@ void initTmr3(void)
 	//Update request only at counter overflow/underflow
 	SET_BIT(TIM3->CR1, TIM_CR1_URS);
 
+	//Set arr to 99, and psc to calculated value to achieve desired update frequency
+	WRITE_REG(TIM3->PSC,pscValue);
+	WRITE_REG(TIM3->ARR, ARR_VALUE);
+
 	//Enable UEV(update events)
 	CLEAR_BIT(TIM3->CR1,TIM_CR1_UDIS);
-
-	//Set prescaler to 479, arr to 99 to achieve 1kHz update frequency (1ms overflow event)
-	WRITE_REG(TIM3->PSC,PSC_VALUE);
-	WRITE_REG(TIM3->ARR, ARR_VALUE);
 
 	//Force update to registers
 	WRITE_REG(TIM3->EGR,TIM_EGR_UG);
@@ -53,10 +74,16 @@ void initTmr3(void)
 
 	//Enable the counter
 	SET_BIT(TIM3->CR1, TIM_CR1_CEN);
+
+	return E_OK;
 }
 
-void elapsedTimeMs_Tmr3(uint32_t *milli_seconds)
+ErrorCode_t elapsedTicks_Tmr3(uint32_t *milliSeconds)
 {
+	//Check for NULL Pointer
+	if(milliSeconds == 0)
+		return E_INVALID_ARGUMENT;
+
 	uint32_t readTime;
     // Read the current time of the counter
 
@@ -64,56 +91,36 @@ void elapsedTimeMs_Tmr3(uint32_t *milli_seconds)
 	readTime = timer3Counter;
 	__enable_irq();
 
-	*milli_seconds = readTime;
+	*milliSeconds = readTime;
+
+	return E_OK;
 }
 
-void delayMS_Tmr3(uint32_t milli_seconds)
+ErrorCode_t delayTicks_Tmr3(uint32_t milliSeconds)
 {
 	uint32_t startTime, currentTime;
+	ErrorCode_t errorCheck;
 
 	// Establish a starting time
-	elapsedTimeMs_Tmr3(&startTime);
+	errorCheck = elapsedTicks_Tmr3(&startTime);
+
+	if(errorCheck != E_OK)
+		return errorCheck;
 
 	// The only time we need to disable IRQs is when reading timeCounter3.
 	while(1) // Loop forever until condition is met
 	{
         // Read the current time
-		elapsedTimeMs_Tmr3(&currentTime);
+		errorCheck = elapsedTicks_Tmr3(&currentTime);
+		if(errorCheck != E_OK)
+			return errorCheck;
 
         // Check condition
-        if (currentTime - startTime >= milli_seconds)
+        if (currentTime - startTime >= milliSeconds)
         {
             break; // Exit the function after 1000 milli-seconds have passed
         }
 	}
+
+	return E_OK;
 }
-
-/*
-void delayMS(uint32_t milli_seconds)
-{
-	uint32_t startTime;
-
-    // Read the starting time in a single critical section
-	__disable_irq();
-	startTime = timer3Counter;
-	__enable_irq();
-
-	// The only time we need to disable IRQs is when reading timeCounter3.
-	while(1) // Loop forever until condition is met
-	{
-        uint32_t currentTime;
-
-        // Read the current time (critical section around a single 32-bit read)
-		__disable_irq();
-		currentTime = timer3Counter;
-		__enable_irq();
-
-        // Check condition
-        if (currentTime - startTime >= milli_seconds)
-        {
-            break; // Exit the function after 1000 milli-seconds have passed
-        }
-	}
-}
-
-*/

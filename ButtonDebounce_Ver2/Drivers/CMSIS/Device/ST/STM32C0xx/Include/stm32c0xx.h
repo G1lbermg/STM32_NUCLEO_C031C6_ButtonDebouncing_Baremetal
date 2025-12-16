@@ -60,7 +60,7 @@
     && !defined (STM32C051xx) && !defined (STM32C071xx) \
     && !defined (STM32C091xx) && !defined (STM32C092xx)
   /* #define STM32C011xx */   /*!< STM32C011xx Devices */
-  /* #define STM32C031xx */   /*!< STM32C031xx Devices */
+   #define STM32C031xx   /*!< STM32C031xx Devices */
   /* #define STM32C051xx */   /*!< STM32C051xx Devices */
   /* #define STM32C071xx */   /*!< STM32C071xx Devices */
   /* #define STM32C091xx */   /*!< STM32C091xx Devices */

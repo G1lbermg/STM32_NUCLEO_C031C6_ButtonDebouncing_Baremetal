@@ -36,6 +36,14 @@ typedef enum
 	E_USART_CLOCK_ENABLE_FAILED   = -304,   // Failed to enable the necessary clock for the USART module
 	E_USART_BUFFER_OVERFLOW       = -305,   // Formatted message was truncated due to buffer size (128 bytes)
 
+	// --- 4. Timer Errors (-400 to -499) ---
+	E_TIMER_INIT_FAILED           = -401,   // General failure during TIMER peripheral initialization
+	E_TIMER_FREQ_TOO_HIGH         = -402,   // Frequency selected during initialization was too high
+	E_TIMER_CALC_ERROR            = -403,   // Prescaler plus one value was calculated to be zero
+	E_TIMER_FREQ_TOO_LOW          = -404,   // Frequency selected during initialization was too low
+
+
+
     // --- Add more here as your project grows ---
 
 } ErrorCode_e;
