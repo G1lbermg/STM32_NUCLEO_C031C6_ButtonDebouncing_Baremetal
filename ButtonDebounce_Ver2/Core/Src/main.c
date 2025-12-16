@@ -136,8 +136,6 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
-	//__enable_irq();
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -163,6 +161,9 @@ int main(void)
   check_Error((printMsgNL_USART2("Nucleo Initialized!")),__FILE__,__LINE__);
 
   //-------------------------------------------------------------------------
+
+  __enable_irq();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
