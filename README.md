@@ -1,7 +1,7 @@
 # Button Debouncing
 ## STM32 NUCLEO-C031C6 Bare Metal Implementation
 
-Minimal C implementation for button debouncing on the STM32C031C6. The repository contains two versions: one using the SysTick timer for debouncing (V1), and the other using the MCU's Timer 3 (V2). Both projects utilize UART to print the button state. Initialization for clocks and debug is done via CubeMX; all other configuration (GPIO, UART, and Timers) is handled via direct memory-mapped register access. A basic error handler is also included in each project.  
+Bare-metal C implementation for button debouncing on the STM32C031C6. The repository contains two versions: one uses the SysTick timer to debounce using blocking methods (V1), and the other uses the MCU's Timer 3 to debounce with a simple non-blocking state machine (V2). Both projects utilize USART to print the button state. Initialization for clocks and debug is done via CubeMX; all other configuration (GPIO, UART, and Timers) is handled via direct memory-mapped register access. A multi-tiered error handler, is also included in each project. The handler is integrated into all BSP's and enables the system to recover gracefully from common faults and protect itself from critical ones. Depending on the user's preference, the error handler can provide error logging using USART and/or indicate critical errors with an external led.  
 
 ### 1. Hardware Setup
 
@@ -23,5 +23,9 @@ Minimal C implementation for button debouncing on the STM32C031C6. The repositor
 
 ### 3. How to Run
    1. **Import:** "Debounce Ver1" or "Debounce Ver2" sub folder as STM32CubeIde project
-   2. **Build:** Select Project > Build Project
-   3. **Flash:** use Run or Debug icons
+   2. **Setup (Option):** Review and adjust the error handler logging and LED indicator settings within the error_check_utilities.h file
+   3. **Build:** Select Project > Build Project
+   4. **Flash:** use Run or Debug icons
+   5. **Run**:
+      * Open serial terminal and set to 9600 Baud
+      * Press Button and observe the LED toggling and messages printed to the terminal
