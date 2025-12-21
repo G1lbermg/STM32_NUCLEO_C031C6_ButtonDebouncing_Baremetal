@@ -118,7 +118,7 @@ ErrorCode_t delayTicks_Tmr3(uint32_t ticks)
         // Check condition
         if (currentTime - startTime >= ticks)
         {
-            break; // Exit the function after 1000 milli-seconds have passed
+            break;
         }
 	}
 
