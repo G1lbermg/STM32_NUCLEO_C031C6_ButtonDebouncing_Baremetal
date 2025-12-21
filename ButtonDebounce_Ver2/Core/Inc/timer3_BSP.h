@@ -7,8 +7,8 @@
 #include "error_codes.h"
 
 ErrorCode_t initTmr3(uint32_t targetFreqHz);
-ErrorCode_t elapsedTicks_Tmr3(uint32_t *milliSeconds);
-ErrorCode_t delayTicks_Tmr3(uint32_t milliSeconds);
+ErrorCode_t elapsedTicks_Tmr3(uint32_t *ticks);
+ErrorCode_t delayTicks_Tmr3(uint32_t ticks);
 
 
 #endif

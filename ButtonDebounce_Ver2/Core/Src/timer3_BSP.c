@@ -78,10 +78,10 @@ ErrorCode_t initTmr3(uint32_t targetFreqHz)
 	return E_OK;
 }
 
-ErrorCode_t elapsedTicks_Tmr3(uint32_t *milliSeconds)
+ErrorCode_t elapsedTicks_Tmr3(uint32_t *ticks)
 {
 	//Check for NULL Pointer
-	if(milliSeconds == 0)
+	if(ticks == 0)
 		return E_INVALID_ARGUMENT;
 
 	uint32_t readTime;
@@ -91,12 +91,12 @@ ErrorCode_t elapsedTicks_Tmr3(uint32_t *milliSeconds)
 	readTime = timer3Counter;
 	__enable_irq();
 
-	*milliSeconds = readTime;
+	*ticks = readTime;
 
 	return E_OK;
 }
 
-ErrorCode_t delayTicks_Tmr3(uint32_t milliSeconds)
+ErrorCode_t delayTicks_Tmr3(uint32_t ticks)
 {
 	uint32_t startTime, currentTime;
 	ErrorCode_t errorCheck;
@@ -116,7 +116,7 @@ ErrorCode_t delayTicks_Tmr3(uint32_t milliSeconds)
 			return errorCheck;
 
         // Check condition
-        if (currentTime - startTime >= milliSeconds)
+        if (currentTime - startTime >= ticks)
         {
             break; // Exit the function after 1000 milli-seconds have passed
         }
