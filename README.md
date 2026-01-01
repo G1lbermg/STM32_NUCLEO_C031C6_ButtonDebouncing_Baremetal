@@ -25,7 +25,7 @@ User button toggles the onboard LED. Debouncing is performed by creating a block
 <img width="850" height="667" alt="Nucleo Button Debouncing" src="https://github.com/user-attachments/assets/952bb117-b78d-4fed-9e17-e5eca95ce5fe" />
 
 #### **Version 2: Timer 3**
-User button toggles the onboard LED. Debouncing is performed using Timer 3 to create two simple non-blocking state machines. 
+User button toggles the onboard LED. Debouncing is performed using Timer 3 by creating two simple non-blocking state machines. 
 * **Input:** PC13 (B1 USER Button)
 * **Output:** PA5 (Onboard User LED4)
 
