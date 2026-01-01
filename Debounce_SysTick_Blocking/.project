@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ButtonDebounce_Ver2</name>
+	<name>Debounce_SysTick_Blocking</name>
 	<comment></comment>
 	<projects>
 	</projects>
