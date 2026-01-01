@@ -170,10 +170,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint16_t buttonState = NOT_PRESSED;
-  uint32_t currentTime,startTime;
+  uint32_t currentTime, ledStartTime, debounceStartTime;
 
   check_Error(elapsedTicks_Tmr3(&currentTime),__FILE__,__LINE__);
-  check_Error(elapsedTicks_Tmr3(&startTime),__FILE__,__LINE__);
+  check_Error(elapsedTicks_Tmr3(&ledStartTime),__FILE__,__LINE__);
+  check_Error(elapsedTicks_Tmr3(&debounceStartTime),__FILE__,__LINE__);
+
 
   check_Error(turn_Off_LED(&LED1),__FILE__,__LINE__);
   while (1)
@@ -184,18 +186,20 @@ int main(void)
 
 	//Turn off LED after alloted time
 	elapsedTicks_Tmr3(&currentTime);
-	if((currentTime-startTime) >= LED_ON_TIME){
+	if((currentTime-ledStartTime) >= LED_ON_TIME){
 		  check_Error(turn_Off_LED(&LED1),__FILE__,__LINE__);
 	}
 
 	//Register a button press then ignore everything else within debounce period
 	check_Error(readButton(&Button1, &buttonState),__FILE__,__LINE__);
 	if(buttonState == PRESSED &&
-			((currentTime-startTime) >= DEBOUNCE_TIME)){
+			((currentTime-debounceStartTime) >= DEBOUNCE_TIME)){
 
 		check_Error((printMsgNL_USART2("Button pressed!")),__FILE__,__LINE__);
 		check_Error(turn_On_LED(&LED1),__FILE__,__LINE__);
-		check_Error(elapsedTicks_Tmr3(&startTime),__FILE__,__LINE__);
+
+		check_Error(elapsedTicks_Tmr3(&ledStartTime),__FILE__,__LINE__);
+		check_Error(elapsedTicks_Tmr3(&debounceStartTime), __FILE__, __LINE__);
 	}
   }
   /* USER CODE END 3 */
