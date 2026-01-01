@@ -18,14 +18,14 @@ Bare-metal C implementation for button debouncing on the STM32C031C6. The reposi
 ### 💡 Implementation Versions
 
 #### **Version 1: Systick Timer**
-Uses the user button to toggle the onboard LED. Debouncing is performed by creating a blocking delay using the Systick timer.  
+User button toggles the onboard LED. Debouncing is performed by creating a blocking delay using the Systick timer.  
 * **Input:** PC13 (B1 USER Button)
 * **Output:** PA5 (Onboard User LED4)
 
 <img width="850" height="667" alt="Nucleo Button Debouncing" src="https://github.com/user-attachments/assets/952bb117-b78d-4fed-9e17-e5eca95ce5fe" />
 
 #### **Version 2: Timer 3**
-Uses the user button to toggle the onboard LED. Debouncing is performed using Timer 3 to via two simple non-blocking state machines. 
+User button toggles the onboard LED. Debouncing is performed using Timer 3 to create two simple non-blocking state machines. 
 * **Input:** PC13 (B1 USER Button)
 * **Output:** PA5 (Onboard User LED4)
 
@@ -35,10 +35,10 @@ Uses the user button to toggle the onboard LED. Debouncing is performed using Ti
 
 
 ---
-### 3. How to Run
-   1. **Import:** "Debounce Ver1" or "Debounce Ver2" sub folder as STM32CubeIde project
+### 🚀 How to Run
+   1. **Import:** `Debounce Ver1` or `Debounce Ver2` sub folder as STM32CubeIde project
    2. **Configure:** (Optional) Adjust error logging and indicator settings in `error_check_utilities.h`.
    3. **Build & Flash:** Select **Project > Build**, then use the **Run** or **Debug** icons.
    5. **Monitor**:
-      * Open serial terminal and set to 9600 Baud
-      * Press Button and observe the LED toggling and messages printed to the terminal
+      * Open serial terminal and set to **9600 Baud**.
+      * Press Button and observe the LED toggling and messages printed to the terminal.
