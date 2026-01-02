@@ -29,12 +29,10 @@ User button toggles the onboard LED. Debouncing is performed using Timer 3 by cr
 * **Input:** PC13 (B1 USER Button)
 * **Output:** PA5 (Onboard User LED4)
 
-<img width="936" height="681" alt="Debouncing State Machine" src="https://github.com/user-attachments/assets/6c22c35d-c44f-482a-b565-594fc1fd7401" />
-
-
-
+<img width="749" height="600" alt="Debouncing State Machine" src="https://github.com/user-attachments/assets/f1799e86-c911-4e15-9df9-4f063658271d" />
 
 ---
+
 ### 🚀 How to Run
    1. **Import:** `Debounce Ver1` or `Debounce Ver2` sub folder as STM32CubeIde project
    2. **Configure:** (Optional) Adjust error logging and indicator settings in `error_check_utilities.h`.
